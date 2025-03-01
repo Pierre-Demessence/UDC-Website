@@ -2,8 +2,7 @@ import { prisma } from './prisma';
 
 // Define permission constants
 export const PERMISSIONS = {
-  ADMIN: 'ADMIN',
-  VALIDATE_TUTORIAL: 'VALIDATE_TUTORIAL',
+  MANAGE_BADGES: 'MANAGE_BADGES',
   BYPASS_TUTORIAL_VALIDATION: 'BYPASS_TUTORIAL_VALIDATION',
 } as const;
 

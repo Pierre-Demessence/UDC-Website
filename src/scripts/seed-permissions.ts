@@ -1,7 +1,19 @@
 import { PrismaClient } from '@prisma/client';
 import { PERMISSIONS, seedPermissions, grantPermission } from '@/lib/permissions';
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+const prismaClient = new PrismaClient();
+
+const permissions = [
+  {
+    name: "MANAGE_BADGES",
+    description: "Can create, edit and delete badges",
+  },
+  {
+    name: "BYPASS_TUTORIAL_VALIDATION",
+    description: "Can publish tutorials without requiring moderation",
+  },
+];
 
 async function main() {
   console.log('Seeding permissions...');
@@ -9,9 +21,17 @@ async function main() {
   // Seed the permissions
   await seedPermissions();
   
+  for (const permission of permissions) {
+    await prisma.permission.upsert({
+      where: { name: permission.name },
+      update: permission,
+      create: permission,
+    });
+  }
+
   // If an admin user ID is provided, grant them the ADMIN permission
   if (process.env.ADMIN_DISCORD_ID) {
-    const adminUser = await prisma.user.findFirst({
+    const adminUser = await prismaClient.user.findFirst({
       where: {
         accounts: {
           some: {
@@ -27,7 +47,7 @@ async function main() {
       await grantPermission(adminUser.id, PERMISSIONS.ADMIN);
       
       // Also set the role to ADMIN for backwards compatibility
-      await prisma.user.update({
+      await prismaClient.user.update({
         where: { id: adminUser.id },
         data: { role: 'ADMIN' }
       });
@@ -39,7 +59,7 @@ async function main() {
   }
   
   // Example: grant VALIDATE_TUTORIAL permission to tutorial moderators
-  const moderators = await prisma.user.findMany({
+  const moderators = await prismaClient.user.findMany({
     where: { role: 'TUTORIAL_MODERATOR' }
   });
   
@@ -49,7 +69,7 @@ async function main() {
   }
   
   // Example: grant BYPASS_TUTORIAL_VALIDATION to tutorial creators
-  const creators = await prisma.user.findMany({
+  const creators = await prismaClient.user.findMany({
     where: { role: 'TUTORIAL_CREATOR' }
   });
   
@@ -67,5 +87,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   });
