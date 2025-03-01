@@ -1,0 +1,211 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  role          Role      @default(USER)
+  
+  // Relationships to other models
+  earnedBadges   UserBadge[]
+  tutorials      Tutorial[]
+  comments       Comment[]
+  projectsOwned  Project[]
+  ratings        Rating[]
+  // Add the new relationship to UserPermission
+  permissions    UserPermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Role-Based Access Control
+enum Role {
+  USER
+  TUTORIAL_CREATOR
+  TUTORIAL_MODERATOR
+  ADMIN
+}
+
+// Badge System
+model Badge {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String?     // Made optional by adding ?
+  users       UserBadge[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+}
+
+// Tutorial System
+model Tutorial {
+  id          String     @id @default(cuid())
+  title       String
+  content     String     @db.Text
+  authorId    String
+  isPublished Boolean    @default(false)
+  isValidated Boolean    @default(false)
+  
+  author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  ratings     Rating[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Project Showcase System
+model Project {
+  id          String     @id @default(cuid())
+  title       String
+  description String     @db.Text
+  thumbnailUrl String?
+  projectUrl  String
+  sourceUrl   String?
+  ownerId     String
+  
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  ratings     Rating[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Jam Calendar
+model GameJam {
+  id        String   @id @default(cuid())
+  title     String
+  startDate DateTime
+  endDate   DateTime
+  itchIoUrl String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Comments and Ratings (shared between Tutorials and Projects)
+model Comment {
+  id         String    @id @default(cuid())
+  content    String    @db.Text
+  authorId   String
+  
+  // Polymorphic relationship
+  tutorialId String?
+  projectId  String?
+  
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tutorial   Tutorial? @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Rating {
+  id         String    @id @default(cuid())
+  score      Int       // 1-5 stars
+  userId     String
+  
+  // Polymorphic relationship
+  tutorialId String?
+  projectId  String?
+  
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tutorial   Tutorial? @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  
+  @@unique([userId, tutorialId])
+  @@unique([userId, projectId])
+}
+
+// Permission System
+model Permission {
+  id          String          @id @default(cuid())
+  name        String          @unique
+  description String
+  users       UserPermission[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model UserPermission {
+  id           String     @id @default(cuid())
+  userId       String
+  permissionId String
+  grantedAt    DateTime   @default(now())
+  
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, permissionId])
+}

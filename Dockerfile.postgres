@@ -1,0 +1,14 @@
+FROM postgres:16
+
+# Environment variables for PostgreSQL
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=udc_website
+
+# Custom initialization scripts
+COPY ./docker-entrypoint-initdb.d/ /docker-entrypoint-initdb.d/
+
+# Expose PostgreSQL port
+EXPOSE 5432
+
+# The base postgres image already includes a suitable CMD instruction

@@ -1,0 +1,17 @@
+* Use NextJS, with Mantine for the UI
+* Use Prisma for the database
+* Use NextAuth for authentication
+* Add Discord login (https://next-auth.js.org/providers/discord)
+* Add badge/medal system, that can be created and given to users
+They can be created by admins.
+* Add a tutorial system, where users can create tutorials. Tutorial can be searched, filtered, and sorted.
+Tutorials must be able to be rated and commented on.
+Tutorial must be validated by a tutorial moderator before being published. Some members can have a role, that allows them to create tutorials without validation.
+Tutorials can also be flagged by users and 
+* Have a Jam calendar showing when are the next UDC Gamejams. Gamejams should have a title, a date and a link to the itch.io page.
+They can be created by admins.
+* Use RBAC system for roles and permissions?
+* Add a project showcase system, where users can showcase their projects. Projects can be searched, filtered, and sorted.
+Projects must be able to be rated and commented on.
+Projects will have a title, a description, a thumbnail, a link to the project, and a link to the source code.
+Projects can be commented on.
