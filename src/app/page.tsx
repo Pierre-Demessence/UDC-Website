@@ -9,7 +9,7 @@ export default function Home() {
       {/* Hero Section */}
       <Container size="lg" py={50}>
         <div style={{ textAlign: 'center', marginBottom: rem(50) }}>
-          <Title>Welcome to Universal Digital Currency</Title>
+          <Title>Welcome to Unity Developer Community</Title>
           <Text size="lg" c="dimmed" mt="md">
             The community hub for UDC game developers to learn, share, and showcase their skills
           </Text>
@@ -23,6 +23,26 @@ export default function Home() {
             </Button>
           </Group>
         </div>
+
+        {/* Discord Widget */}
+        <Paper 
+          withBorder 
+          shadow="md" 
+          style={{ 
+            width: 'fit-content', 
+            margin: '0 auto',
+            marginTop: rem(50)
+          }}
+        >
+          <iframe 
+            src="https://discord.com/widget?id=493510779866316801&theme=dark" 
+            width="350" 
+            height="500" 
+            allowTransparency={true} 
+            frameBorder="0" 
+            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+          />
+        </Paper>
       </Container>
     </>
   );
