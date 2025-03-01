@@ -35,6 +35,12 @@ export default async function AdminLayout({
             label="Tutorials"
             leftSection={<IconList size={16} />}
           />
+          <NavLink
+            component={Link}
+            href="/admin/gamejams"
+            label="Game Jams"
+            leftSection={<IconList size={16} />}
+          />
         </Paper>
         <Paper p="md" style={{ flex: 1 }} withBorder>
           {children}

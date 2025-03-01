@@ -15,7 +15,7 @@ export default function Header() {
     { label: 'Home', href: '/' },
     { label: 'Tutorials', href: '/tutorials' },
     { label: 'Projects', href: '/projects' },
-    { label: 'Game Jams', href: '/jams' },
+    { label: 'Game Jams', href: '/gamejams' },
     { label: 'Users', href: '/users' },
     ...(isAdmin ? [{ label: 'Admin', href: '/admin' }] : []),
   ];
