@@ -11,6 +11,8 @@ interface Tutorial {
   isPublished: boolean;
   isValidated: boolean;
   createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
   avgRating: number | null;
   author: {
     name: string | null;
@@ -51,9 +53,10 @@ export default async function TutorialsPage() {
         }
       }
     },
-    orderBy: {
-      createdAt: "desc"
-    }
+    orderBy: [
+      { publishedAt: "desc" },
+      { createdAt: "desc" }
+    ]
   });
 
   // Calculate average ratings
@@ -99,6 +102,14 @@ export default async function TutorialsPage() {
                   <Text size="sm" c="dimmed">
                     • {tutorial._count.comments} comments
                   </Text>
+                </Group>
+                <Group gap="xs">
+                  {tutorial.publishedAt ? (
+                    <Text size="sm" c="dimmed">Published {new Date(tutorial.publishedAt).toLocaleDateString()}</Text>
+                  ) : (
+                    <Text size="sm" c="dimmed">Created {new Date(tutorial.createdAt).toLocaleDateString()}</Text>
+                  )}
+                  <Text size="sm" c="dimmed">• Last modified {new Date(tutorial.updatedAt).toLocaleDateString()}</Text>
                 </Group>
                 {(!tutorial.isValidated || !tutorial.isPublished) && (
                   <Text size="sm" c="yellow">

@@ -42,6 +42,8 @@ export async function PUT(
       title,
       content,
       isPublished,
+      // Set publishedAt when publishing for the first time
+      publishedAt: !existingTutorial.isPublished && isPublished ? new Date() : undefined,
     },
   });
 

@@ -27,9 +27,10 @@ export default async function MyTutorialsPage() {
         }
       }
     },
-    orderBy: {
-      createdAt: "desc"
-    }
+    orderBy: [
+      { publishedAt: "desc" },
+      { createdAt: "desc" }
+    ]
   });
 
   const tutorialsWithStats = tutorials.map(tutorial => {
@@ -69,6 +70,16 @@ export default async function MyTutorialsPage() {
                   <Text size="sm" c="dimmed">
                     • {tutorial._count.comments} comments
                   </Text>
+                </Group>
+                <Group gap="xs">
+                  {tutorial.publishedAt ? (
+                    <Text size="sm" c="dimmed">Published {new Date(tutorial.publishedAt).toLocaleDateString()}</Text>
+                  ) : (
+                    <Text size="sm" c="dimmed">Created {new Date(tutorial.createdAt).toLocaleDateString()}</Text>
+                  )}
+                  <Text size="sm" c="dimmed">• Last modified {new Date(tutorial.updatedAt).toLocaleDateString()}</Text>
+                </Group>
+                <Group>
                   {!tutorial.isValidated && (
                     <Badge color="yellow">Pending Validation</Badge>
                   )}

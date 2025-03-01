@@ -16,8 +16,9 @@ export default async function EditTutorialPage({ params }: Props) {
     redirect("/");
   }
 
+  const { id } = await params;
   const tutorial = await prisma.tutorial.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       author: {
         select: {

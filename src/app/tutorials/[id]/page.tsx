@@ -95,6 +95,12 @@ export default async function TutorialPage({ params }: Props) {
                 {!tutorial.isValidated && <Badge color="yellow">Pending Validation</Badge>}
                 {!tutorial.isPublished && <Badge color="gray">Draft</Badge>}
               </Group>
+              <Group>
+                {tutorial.publishedAt && (
+                  <Text size="sm" c="dimmed">Published {new Date(tutorial.publishedAt).toLocaleDateString()}</Text>
+                )}
+                <Text size="sm" c="dimmed">Last modified {new Date(tutorial.updatedAt).toLocaleDateString()}</Text>
+              </Group>
             </Stack>
 
             <Group>

@@ -23,9 +23,9 @@ export default async function AdminTutorialsPage() {
         }
       }
     },
-    orderBy: {
-      createdAt: "desc"
-    }
+    orderBy: [
+      { createdAt: "desc" }
+    ]
   });
 
   return (
@@ -41,9 +41,14 @@ export default async function AdminTutorialsPage() {
                 <Group>
                   <Avatar src={tutorial.author.image} alt={tutorial.author.name || ""} />
                   <Text>By {tutorial.author.name}</Text>
-                  <Text size="sm" c="dimmed">
-                    • {new Date(tutorial.createdAt).toLocaleDateString()}
-                  </Text>
+                </Group>
+                <Group gap="xs">
+                  {tutorial.publishedAt ? (
+                    <Text size="sm" c="dimmed">Published {new Date(tutorial.publishedAt).toLocaleDateString()}</Text>
+                  ) : (
+                    <Text size="sm" c="dimmed">Created {new Date(tutorial.createdAt).toLocaleDateString()}</Text>
+                  )}
+                  <Text size="sm" c="dimmed">• Last modified {new Date(tutorial.updatedAt).toLocaleDateString()}</Text>
                 </Group>
                 <Text size="sm" lineClamp={2}>
                   {tutorial.content}
